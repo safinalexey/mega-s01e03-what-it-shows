@@ -2,7 +2,7 @@
 layout: runbook
 title: '#4471 · separate parser and form-hint failures'
 owner: Aleksei Safin
-status: investigated
+status: resolved
 reviewed: 2026-11-02
 signature: 'Aleksei Safin · S01E03 · 2026-11-02'
 ---
@@ -16,6 +16,15 @@ signature: 'Aleksei Safin · S01E03 · 2026-11-02'
 </script>
 
 The [original incident](/kb/incidents/4471/) says “one issue, one fix queued.” Its rendered cause table contradicts that claim. The shared parser and booking-v3 hint require separate fixes and separate tickets.
+
+## Engineering outcome
+
+The [course engineering update](https://hq.mega.dev/challenges/what-it-shows) reports that #4471 closed on **5 October 2026**:
+
+- **Parser: fixed.** Engineering reports `fix(dates): parse dd/mm for eu locales`. Close the parser ticket as completed.
+- **Hint: won't fix.** Engineering retired the booking-v3 form. Close the hint ticket as not planned; do not report it as a code fix.
+
+These dispositions come from engineering. This investigation did not run the production product or independently verify its fix. The exported counts below remain the historical report population; closing tickets does not remove reports or change their cause. The symptom exceptions below remain a limit of the export.
 
 ## Counts from the export
 
@@ -41,7 +50,7 @@ Fixing the parser alone leaves the misleading booking-v3 hint in place. A subjec
 
 Read the received series to understand customer impact and the merged series to understand desk activity. A large merge day is not evidence of a new product regression or a completed fix.
 
-## What the desk should do now
+## Triage recommendation for future reports
 
 Read report bodies, verify tenant locale and form version, and compare causes before merging. Use the examples below to check a decision. If the tenant is unknown or symptoms conflict, keep the report separate and investigate it. Different subjects can share a cause, and identical subjects can hide different causes.
 
