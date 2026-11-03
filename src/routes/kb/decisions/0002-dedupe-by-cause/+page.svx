@@ -1,0 +1,29 @@
+---
+layout: runbook
+title: '0002 · verify cause before merging reports'
+owner: Aleksei Safin
+status: proposed
+reviewed: 2026-11-02
+signature: 'Aleksei Safin · S01E03 · 2026-11-02'
+---
+
+<script>
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+  import DedupeExplorer from '#lib/kb/DedupeExplorer.svelte';
+</script>
+
+## Context
+
+The [investigation of #4471](/kb/incidents/4471-investigation/) shows independent failures merged into a single ticket. Matching subjects does not prove a shared cause. The accepted [decision 0001](/kb/decisions/0001-dedupe-by-subject/) remains an immutable record of the old choice.
+
+## Proposed replacement
+
+Read each report, join its tenant configuration, check the channel and form version, and establish the same cause before merging. Use the subject to find candidates. Missing tenant data or unexplained symptoms require separate investigation. Preserve report IDs and count each once. Use rendered tables and current evidence to check the written policy.
+
+<DedupeExplorer />
+
+## Consequences
+
+Triage takes more reading. Engineering gets one ticket per supported cause, with auditable counts, instead of unrelated failures hidden behind one title. This proposal does not change the desk’s live process until its owner accepts it.
+
+<RenderStamp {signature} />

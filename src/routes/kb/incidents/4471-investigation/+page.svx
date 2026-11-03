@@ -1,0 +1,56 @@
+---
+layout: runbook
+title: '#4471 · separate parser and form-hint failures'
+owner: Aleksei Safin
+status: investigated
+reviewed: 2026-11-02
+signature: 'Aleksei Safin · S01E03 · 2026-11-02'
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import QueueTimeline from '#lib/kb/QueueTimeline.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+  import InvestigationFacts from '#lib/kb/InvestigationFacts.svelte';
+  import DedupeExplorer from '#lib/kb/DedupeExplorer.svelte';
+</script>
+
+The [original incident](/kb/incidents/4471/) says “one issue, one fix queued.” Its rendered cause table contradicts that claim. The shared parser and booking-v3 hint require separate fixes and separate tickets.
+
+## Counts from the export
+
+<CauseTable ticket={4471} />
+
+These are historical merge targets in the exported desk data. The “no ticket of its own” label describes that export; the GitHub tickets delivered with this investigation track each cause separately.
+
+The calculation deduplicates report IDs, joins each tenant to its locale and booking-form version, and runs `causeOf`. Browser locale and intake tags are clues, not the classification rule. Numeric output stays in components so a new export can update the page.
+
+## Independent failures
+
+**Shared parser.** Day-first tenants have dates read month first. Harbour Dental’s 7 April reminder became 4 July (R-41200). Correct parsing at the date boundary and test ambiguous dates, days above twelve, and both day-first and month-first locales. Include app, email, and booking-v2 pathways.
+
+**booking-v3 hint.** The form prints `MM/DD/YYYY` while interpreting input using a day-first tenant locale. A user following the hint gets the wrong date. Alder Physio’s 6 August booking became 8 June (R-41241). Generate hint and interpretation from the same format configuration; test Alder Physio, Copper Studio and Pale Harbour, and preserve booking-v2 behavior.
+
+Fixing the parser alone leaves the misleading booking-v3 hint in place. A subject match does not establish either cause.
+
+## Received is different from merged
+
+<InvestigationFacts />
+
+<QueueTimeline ticket={4471} />
+
+Read the received series to understand customer impact and the merged series to understand desk activity. A large merge day is not evidence of a new product regression or a completed fix.
+
+## What the desk should do now
+
+Read report bodies, verify tenant locale and form version, and compare causes before merging. Use the examples below to check a decision. If the tenant is unknown or symptoms conflict, keep the report separate and investigate it. Different subjects can share a cause, and identical subjects can hide different causes.
+
+<DedupeExplorer />
+
+Decision 0001 is old policy, not proof that reports are duplicates. Its accepted text remains unchanged; [decision 0002](/kb/decisions/0002-dedupe-by-cause/) proposes its replacement. Do not claim the desk adopted a new policy merely because this page exists. Recheck the rendered index for stale pages and review the next export because the desk continues working.
+
+## Reproduce and audit
+
+Run `npm run analyze` to produce the classification and each issue’s full report-ID list. Run `npm run build` to render this source and the rest of the KB, including the cause table, queue timeline, examples and signature. The submitted repository contains both this `.svx` source and the generated HTML under `build/kb/`.
+
+<RenderStamp {signature} />
